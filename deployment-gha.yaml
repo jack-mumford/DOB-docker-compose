@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: runner
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: runner
+  template:
+    metadata:
+      labels:
+        app: runner
+    spec:
+      containers:
+      - name: runner
+        image: DOB-docker-compose/DOB-runner:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+        env:
+          - name: GH_OWNER
+            value: ${GH_OWNER}
+          - name: GH_REPOSITORY
+            value: ${GH_REPOSITORY}
+          - name: GH_TOKEN
+            value: ${GH_TOKEN}

@@ -20,7 +20,7 @@ RUN chown -R nexus:nexus /opt/nexus \
 
 RUN sed -i 's/-Xms2703m/-Xms1200m/g' /opt/nexus/bin/nexus.vmoptions \
     && sed -i 's/-Xmx2703m/-Xmx1200m/g' /opt/nexus/bin/nexus.vmoptions \
-    && sed -i 's/-XX:MaxDirectMemorySize=2703m/-XX:MaxDirectMemorySize=2g/g' /opt/nexus/bin/nexus.vmoptions \
+    && sed -i 's/-XX:MaxDirectMemorySize=2703m/-XX:MaxDirectMemorySize=4g/g' /opt/nexus/bin/nexus.vmoptions \
     && echo "-Djava.util.prefs.userRoot=/nexus-data/nexus3/javaprefs" >> /opt/nexus/bin/nexus.vmoptions
 
 FROM eclipse-temurin:8-jre AS runner

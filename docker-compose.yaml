@@ -1,60 +1,18 @@
-# docker-compose build
-# docker-compose up
-version: '3.8'
-
 services:
-  # Nexus Repository Manager with GitHub Actions Runner (combined)
-  nexus-actions:
+  nexus:
     build:
-      context: .
-      dockerfile: Dockerfile
-      # Build for arm64, uncomment to build for armv7
-      platforms:
-        - linux/arm64
-        #- linux/arm/v7
-    image: nexus-actions:latest
-    container_name: nexus-actions
-    restart: unless-stopped
-    environment:
-      # Nexus configuration
-      NEXUS_DATA: "/nexus-data"
-      # Optional: Run this under http://localhost:8081/nxrm/
-      # NEXUS_CONTEXT: 'nxrm'
-      # GitHub Actions runner configuration
-      RUNNER_NAME: "nexus-runner"
-      RUNNER_WORKDIR: "/actions-runner"
-    volumes:
-      # Persist Nexus data
-      - nexus-data:/nexus-data
-      # Persist GitHub Actions runner data
-      - actions-runner-data:/actions-runner
-      # Optional: Mount Docker socket for Docker-in-Docker capabilities
-      # - /var/run/docker.sock:/var/run/docker.sock
-      # Optional: Mount local workspace for development
-      - ./workspace:/workspace
+      context: ./DOB-nexus
     ports:
-      # Nexus UI - accessible at http://localhost:8081
       - "8081:8081"
-    networks:
-      - nexus-network
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8081/" ]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 90s
+    volumes:
+      - nexus-data:/nexus-data
+  runner:
+    build:
+      context: ./DOB-runner
+    environment:
+      - GH_OWNER=${GH_OWNER}
+      - GH_REPOSITORY=${GH_REPOSITORY}
+      - GH_TOKEN=${GH_TOKEN}
 
-# Network configuration
-networks:
-  nexus-network:
-    driver: bridge
-
-# Volume configuration for data persistence
 volumes:
-  # Nexus data persistence - stores repositories, configurations, and artifacts
   nexus-data:
-    driver: local
-
-  # GitHub Actions runner data persistence - stores runner configuration and logs
-  actions-runner-data:
-    driver: local

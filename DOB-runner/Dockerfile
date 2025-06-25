@@ -5,6 +5,9 @@ FROM mcr.microsoft.com/dotnet/runtime-deps:10.0-preview
 RUN apt update && apt upgrade -y
 RUN apt install -y curl && apt-get install -y jq
 
+# Create a non-root user first
+RUN useradd -m -u 1001 GHA
+
 # Set working directory in user's home
 RUN mkdir -p /home/GHA/actions-runner
 WORKDIR /home/GHA/actions-runner
@@ -20,9 +23,6 @@ ADD scripts/start.sh /home/GHA/actions-runner/start.sh
 
 # Make the script executable
 RUN chmod +x ./start.sh
-
-# Create a non-root user
-RUN useradd -m -u 1001 GHA
 
 # Switch to the non-root user
 USER GHA
